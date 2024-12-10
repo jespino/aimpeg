@@ -21,14 +21,30 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Get API key from environment
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" {
-		log.Fatal("OPENAI_API_KEY not found in environment")
+	// Get service type from args or default to OpenAI
+	serviceType := "openai"
+	if len(os.Args) > 2 {
+		serviceType = os.Args[2]
 	}
 
-	// Initialize AI service
-	aiService := ai.NewOpenAIService(apiKey)
+	var aiService ai.Service
+	
+	switch serviceType {
+	case "anthropic":
+		apiKey := os.Getenv("ANTHROPIC_API_KEY")
+		if apiKey == "" {
+			log.Fatal("ANTHROPIC_API_KEY not found in environment")
+		}
+		aiService = ai.NewAnthropicService(apiKey)
+	case "openai":
+		apiKey := os.Getenv("OPENAI_API_KEY")
+		if apiKey == "" {
+			log.Fatal("OPENAI_API_KEY not found in environment")
+		}
+		aiService = ai.NewOpenAIService(apiKey)
+	default:
+		log.Fatalf("Unknown service type: %s", serviceType)
+	}
 
 	// Get ffmpeg command
 	command, err := aiService.GenerateFFmpegCommand(os.Args[1])

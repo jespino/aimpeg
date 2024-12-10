@@ -1,13 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 
+	"ffmpeg-ai/ai"
 	"github.com/joho/godotenv"
-	openai "github.com/sashabaranov/go-openai"
 )
 
 func main() {
@@ -28,32 +27,15 @@ func main() {
 		log.Fatal("OPENAI_API_KEY not found in environment")
 	}
 
-	// Initialize OpenAI client
-	client := openai.NewClient(apiKey)
+	// Initialize AI service
+	aiService := ai.NewOpenAIService(apiKey)
 
-	// Create completion request
-	userPrompt := os.Args[1]
-	prompt := fmt.Sprintf("Generate only the ffmpeg command for the following request: %s. "+
-		"Respond only with the command, no explanations.", userPrompt)
-
-	resp, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: prompt,
-				},
-			},
-		},
-	)
-
+	// Get ffmpeg command
+	command, err := aiService.GenerateFFmpegCommand(os.Args[1])
 	if err != nil {
-		log.Printf("Error getting completion: %v\n", err)
-		os.Exit(1)
+		log.Fatalf("Error generating command: %v", err)
 	}
 
 	// Print the ffmpeg command
-	fmt.Println(resp.Choices[0].Message.Content)
+	fmt.Println(command)
 }

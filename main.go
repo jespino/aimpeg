@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"ffmpeg-ai/ai"
 	"github.com/BurntSushi/toml"
@@ -30,10 +31,23 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Get config file path
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("Error getting home directory:", err)
+	}
+	configDir := filepath.Join(homeDir, ".config", "aimpeg")
+	configFile := filepath.Join(configDir, "config.toml")
+
+	// Create config directory if it doesn't exist
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		log.Fatal("Error creating config directory:", err)
+	}
+
 	// Load config file
 	var config Config
-	if _, err := toml.DecodeFile("config.toml", &config); err != nil {
-		log.Fatal("Error loading config.toml:", err)
+	if _, err := toml.DecodeFile(configFile, &config); err != nil {
+		log.Fatal("Error loading config file:", err)
 	}
 
 	// Get service type from args or default to OpenAI

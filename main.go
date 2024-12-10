@@ -1,12 +1,12 @@
 package main
 
 import (
+	"aimpeg/ai"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 
-	"aimpeg/ai"
 	"github.com/BurntSushi/toml"
 )
 
@@ -36,8 +36,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Error getting home directory:", err)
 	}
-	configDir := filepath.Join(homeDir, ".config", "aimpeg")
-	configFile := filepath.Join(configDir, "config.toml")
+	configDir := filepath.Join(homeDir, ".config")
+	configFile := filepath.Join(configDir, "aimpeg")
 
 	// Create config directory if it doesn't exist
 	if err := os.MkdirAll(configDir, 0755); err != nil {
@@ -57,7 +57,7 @@ func main() {
 	}
 
 	var aiService ai.Service
-	
+
 	switch serviceType {
 	case "anthropic":
 		if config.Anthropic.APIKey == "" {

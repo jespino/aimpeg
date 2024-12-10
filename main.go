@@ -1,7 +1,7 @@
 package main
 
 import (
-	"aimpeg/ai"
+	"github.com/jespino/aimpeg/ai"
 	"fmt"
 	"log"
 	"os"

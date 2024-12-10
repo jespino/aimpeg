@@ -1,4 +1,4 @@
-module aimpeg
+module github.com/jespino/aimpeg
 
 go 1.21
 

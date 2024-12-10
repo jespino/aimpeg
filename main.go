@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"ffmpeg-ai/ai"
+	"aimpeg/ai"
 	"github.com/BurntSushi/toml"
 )
 
@@ -27,7 +27,7 @@ type Config struct {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: ffmpeg-ai \"your request here\"")
+		fmt.Println("Usage: aimpeg \"your request here\"")
 		os.Exit(1)
 	}
 

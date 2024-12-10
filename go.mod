@@ -1,4 +1,4 @@
-module ffmpeg-ai
+module aimpeg
 
 go 1.21
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -73,6 +74,20 @@ func main() {
 		log.Fatalf("Error generating command: %v", err)
 	}
 
-	// Print the ffmpeg command
-	fmt.Println(command)
+	// Print and execute the ffmpeg command
+	fmt.Println("Executing:", command)
+	
+	// Split the command string into command and arguments
+	cmdParts := strings.Fields(command)
+	if len(cmdParts) == 0 {
+		log.Fatal("Empty command received from AI")
+	}
+
+	cmd := exec.Command(cmdParts[0], cmdParts[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error executing command: %v", err)
+	}
 }

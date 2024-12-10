@@ -25,6 +25,10 @@ type Config struct {
 		Endpoint string `toml:"endpoint"`
 		Model    string `toml:"model"`
 	} `toml:"ollama"`
+	Mistral struct {
+		APIKey string `toml:"api_key"`
+		Model  string `toml:"model"`
+	} `toml:"mistral"`
 }
 
 func main() {
@@ -64,6 +68,8 @@ func main() {
 		aiService = ai.NewAnthropicService(config.Anthropic.APIKey)
 	} else if config.Ollama.Endpoint != "" {
 		aiService = ai.NewOllamaService(config.Ollama.Model)
+	} else if config.Mistral.APIKey != "" {
+		aiService = ai.NewMistralService(config.Mistral.APIKey, config.Mistral.Model)
 	} else {
 		log.Fatal("No AI service is properly configured. Please check your config file.")
 	}

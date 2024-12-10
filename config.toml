@@ -9,3 +9,7 @@ model = "claude-3-opus-20240229"
 [ollama]
 endpoint = "http://localhost:11434"
 model = "llama2"
+
+[mistral]
+api_key = ""
+model = "mistral-tiny"

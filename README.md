@@ -9,6 +9,7 @@ AImpeg is a command-line tool that uses AI to generate and explain FFmpeg comman
   - OpenAI (GPT-3.5)
   - Anthropic (Claude)
   - Ollama (local models)
+  - Mistral AI
 - Interactive command confirmation workflow
 - Detailed command explanations
 - Configuration via TOML file
@@ -55,6 +56,10 @@ model = "claude-3-opus-20240229"
 [ollama]
 endpoint = "http://localhost:11434"
 model = "llama2"
+
+[mistral]
+api_key = "your-api-key"
+model = "mistral-tiny"
 ```
 
 At least one provider must be configured.

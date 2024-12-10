@@ -15,9 +15,29 @@ AImpeg is a command-line tool that uses AI to generate and explain FFmpeg comman
 
 ## Installation
 
-1. Ensure you have Go 1.21 or later installed
-2. Clone this repository
-3. Run `go install` in the project directory
+### Prerequisites
+
+- Go 1.21 or later
+- FFmpeg installed on your system
+
+### Install from source
+
+```bash
+go install github.com/jespino/aimpeg@latest
+```
+
+### Manual installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/jespino/aimpeg.git
+cd aimpeg
+```
+
+2. Build and install
+```bash
+go install
+```
 
 ## Configuration
 
@@ -63,4 +83,4 @@ The tool will:
 
 ## License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -41,7 +41,7 @@ func (s *AnthropicService) ExplainFFmpegCommand(command string) (string, error) 
 
 func (s *AnthropicService) GenerateFFmpegCommand(prompt string) (string, error) {
 	aiPrompt := fmt.Sprintf("Generate only the ffmpeg command for the following request: %s. "+
-		"Respond only with the raw command, no explanations or code block markers.", prompt)
+		"Respond with just the raw command. No explanations, no quotes, no code blocks, no extra text.", prompt)
 
 	message, err := s.client.Messages.New(context.Background(), anthropic.MessageNewParams{
 		Model:     anthropic.F(anthropic.ModelClaude_3_5_Sonnet_20240620),

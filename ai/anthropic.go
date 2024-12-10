@@ -12,7 +12,10 @@ type AnthropicService struct {
 }
 
 func NewAnthropicService(apiKey string) *AnthropicService {
-	client, _ := anthropic.NewClient(apiKey)
+	cfg := anthropic.ClientConfig{
+		APIKey: apiKey,
+	}
+	client := anthropic.NewClient(cfg)
 	return &AnthropicService{
 		client: client,
 	}
@@ -22,13 +25,19 @@ func (s *AnthropicService) GenerateFFmpegCommand(prompt string) (string, error) 
 	aiPrompt := fmt.Sprintf("Generate only the ffmpeg command for the following request: %s. "+
 		"Respond only with the command, no explanations.", prompt)
 
-	resp, err := s.client.CreateMessage(context.Background(), &anthropic.CreateMessageRequest{
-		Model:     anthropic.Claude3Opus,
-		MaxTokens: 1000,
-		Messages: []anthropic.Message{
+	resp, err := s.client.Messages.Create(context.Background(), &anthropic.MessageRequest{
+		Model:    "claude-3-opus-20240229",
+		MaxTokens: anthropic.Int(1000),
+		System:   anthropic.String("You are an expert in ffmpeg commands. Respond only with the command, no explanations."),
+		Messages: []anthropic.MessageParam{
 			{
-				Role:    anthropic.UserRole,
-				Content: aiPrompt,
+				Role:    "user",
+				Content: []anthropic.MessageContent{
+					{
+						Type: "text",
+						Text: aiPrompt,
+					},
+				},
 			},
 		},
 	})

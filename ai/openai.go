@@ -42,7 +42,7 @@ func (s *OpenAIService) ExplainFFmpegCommand(command string) (string, error) {
 
 func (s *OpenAIService) GenerateFFmpegCommand(prompt string) (string, error) {
 	aiPrompt := fmt.Sprintf("Generate only the ffmpeg command for the following request: %s. "+
-		"Respond only with the command, no explanations.", prompt)
+		"Respond only with the raw command, no explanations or code block markers.", prompt)
 
 	resp, err := s.client.CreateChatCompletion(
 		context.Background(),

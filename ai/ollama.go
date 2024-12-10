@@ -129,7 +129,7 @@ func (s *OllamaService) GenerateFFmpegCommand(prompt string) (string, error) {
 	messages := []ollamaMessage{
 		{
 			Role:    "system",
-			Content: "You are an expert in ffmpeg. Generate only the command, no explanations.",
+			Content: "You are an expert in ffmpeg. Generate only the raw command without code block markers or explanations.",
 		},
 		{
 			Role:    "user",

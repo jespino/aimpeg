@@ -74,20 +74,63 @@ func main() {
 		log.Fatalf("Error generating command: %v", err)
 	}
 
-	// Print and execute the ffmpeg command
-	fmt.Println("Executing:", command)
-	
-	// Split the command string into command and arguments
-	cmdParts := strings.Fields(command)
-	if len(cmdParts) == 0 {
-		log.Fatal("Empty command received from AI")
-	}
+	// Print the generated command
+	fmt.Println("\nGenerated command:", command)
 
-	cmd := exec.Command(cmdParts[0], cmdParts[1:]...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	for {
+		fmt.Print("\nDo you want to run this command? (yes/no/explain): ")
+		var response string
+		fmt.Scanln(&response)
 
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("Error executing command: %v", err)
+		switch strings.ToLower(response) {
+		case "yes":
+			// Execute the command
+			cmdParts := strings.Fields(command)
+			if len(cmdParts) == 0 {
+				log.Fatal("Empty command received from AI")
+			}
+
+			cmd := exec.Command(cmdParts[0], cmdParts[1:]...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+
+			if err := cmd.Run(); err != nil {
+				log.Fatalf("Error executing command: %v", err)
+			}
+			return
+
+		case "no":
+			fmt.Println("Command execution cancelled")
+			return
+
+		case "explain":
+			explanation, err := aiService.ExplainFFmpegCommand(command)
+			if err != nil {
+				log.Fatalf("Error getting explanation: %v", err)
+			}
+			fmt.Printf("\nExplanation:\n%s\n", explanation)
+			fmt.Print("\nDo you want to run this command? (yes/no): ")
+			fmt.Scanln(&response)
+			if strings.ToLower(response) == "yes" {
+				cmdParts := strings.Fields(command)
+				if len(cmdParts) == 0 {
+					log.Fatal("Empty command received from AI")
+				}
+
+				cmd := exec.Command(cmdParts[0], cmdParts[1:]...)
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+
+				if err := cmd.Run(); err != nil {
+					log.Fatalf("Error executing command: %v", err)
+				}
+			} else {
+				fmt.Println("Command execution cancelled")
+			}
+			return
+
+		default:
+			fmt.Println("Invalid response. Please answer 'yes', 'no', or 'explain'")
+		}
 	}
 }

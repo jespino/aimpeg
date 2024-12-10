@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jmorganca/ollama-go"
+	openai "github.com/sashabaranov/go-openai"
 )
 
 type OllamaService struct {
-	client *ollama.Client
+	client *openai.Client
 	model  string
 }
 
 func NewOllamaService(model string) *OllamaService {
 	return &OllamaService{
-		client: ollama.NewClient("http://localhost:11434"),
+		client: openai.NewClientWithConfig(openai.DefaultConfig("")),
 		model:  model,
 	}
 }
@@ -23,15 +23,21 @@ func (s *OllamaService) GenerateFFmpegCommand(prompt string) (string, error) {
 	aiPrompt := fmt.Sprintf("Generate only the ffmpeg command for the following request: %s. "+
 		"Respond only with the command, no explanations.", prompt)
 
-	resp, err := s.client.Generate(context.Background(), &ollama.GenerateRequest{
-		Model:   s.model,
-		Prompt:  aiPrompt,
-		Stream:  false,
-	})
-
+	resp, err := s.client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: s.model,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: aiPrompt,
+				},
+			},
+		},
+	)
 	if err != nil {
 		return "", fmt.Errorf("error getting completion: %w", err)
 	}
 
-	return resp.Response, nil
+	return resp.Choices[0].Message.Content, nil
 }

@@ -50,29 +50,17 @@ func main() {
 		log.Fatal("Error loading config file:", err)
 	}
 
-	// Get service type from args or default to OpenAI
-	serviceType := "openai"
-	if len(os.Args) > 2 {
-		serviceType = os.Args[2]
-	}
-
 	var aiService ai.Service
 
-	switch serviceType {
-	case "anthropic":
-		if config.Anthropic.APIKey == "" {
-			log.Fatal("Anthropic API key not found in config")
-		}
-		aiService = ai.NewAnthropicService(config.Anthropic.APIKey)
-	case "openai":
-		if config.OpenAI.APIKey == "" {
-			log.Fatal("OpenAI API key not found in config")
-		}
+	// Try services in order until we find one that's configured
+	if config.OpenAI.APIKey != "" {
 		aiService = ai.NewOpenAIService(config.OpenAI.APIKey)
-	case "ollama":
+	} else if config.Anthropic.APIKey != "" {
+		aiService = ai.NewAnthropicService(config.Anthropic.APIKey)
+	} else if config.Ollama.Endpoint != "" {
 		aiService = ai.NewOllamaService(config.Ollama.Model)
-	default:
-		log.Fatalf("Unknown service type: %s", serviceType)
+	} else {
+		log.Fatal("No AI service is properly configured. Please check your config file.")
 	}
 
 	// Get ffmpeg command

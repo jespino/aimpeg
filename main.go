@@ -42,6 +42,12 @@ func main() {
 			log.Fatal("OPENAI_API_KEY not found in environment")
 		}
 		aiService = ai.NewOpenAIService(apiKey)
+	case "ollama":
+		model := os.Getenv("OLLAMA_MODEL")
+		if model == "" {
+			model = "llama2" // default model
+		}
+		aiService = ai.NewOllamaService(model)
 	default:
 		log.Fatalf("Unknown service type: %s", serviceType)
 	}

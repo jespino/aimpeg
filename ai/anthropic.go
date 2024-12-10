@@ -28,12 +28,11 @@ func (s *AnthropicService) GenerateFFmpegCommand(prompt string) (string, error) 
 	message, err := s.client.Messages.New(context.Background(), anthropic.MessageNewParams{
 		Model:     anthropic.F(anthropic.ModelClaude_3_5_Sonnet_20240620),
 		MaxTokens: anthropic.F(int64(1000)),
-		SystemPrompt: anthropic.F("You are an expert in ffmpeg commands. Respond only with the command, no explanations."),
+		System:    anthropic.F([]anthropic.TextBlockParam{anthropic.NewTextBlock("You are an expert in ffmpeg commands. Respond only with the command, no explanations.")}),
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(aiPrompt)),
 		}),
 	})
-
 	if err != nil {
 		return "", fmt.Errorf("error getting completion: %w", err)
 	}

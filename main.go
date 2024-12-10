@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -27,9 +28,12 @@ type Config struct {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: aimpeg \"your request here\"")
+		fmt.Println("Usage: aimpeg your request here")
 		os.Exit(1)
 	}
+
+	// Concatenate all arguments after the program name into a single string
+	prompt := strings.Join(os.Args[1:], " ")
 
 	// Get config file path
 	homeDir, err := os.UserHomeDir()
@@ -64,7 +68,7 @@ func main() {
 	}
 
 	// Get ffmpeg command
-	command, err := aiService.GenerateFFmpegCommand(os.Args[1])
+	command, err := aiService.GenerateFFmpegCommand(prompt)
 	if err != nil {
 		log.Fatalf("Error generating command: %v", err)
 	}

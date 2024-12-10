@@ -1,0 +1,11 @@
+[openai]
+api_key = ""
+model = "gpt-3.5-turbo"
+
+[anthropic]
+api_key = ""
+model = "claude-3-opus-20240229"
+
+[ollama]
+endpoint = "http://localhost:11434"
+model = "llama2"

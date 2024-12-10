@@ -6,8 +6,23 @@ import (
 	"os"
 
 	"ffmpeg-ai/ai"
-	"github.com/joho/godotenv"
+	"github.com/BurntSushi/toml"
 )
+
+type Config struct {
+	OpenAI struct {
+		APIKey string `toml:"api_key"`
+		Model  string `toml:"model"`
+	} `toml:"openai"`
+	Anthropic struct {
+		APIKey string `toml:"api_key"`
+		Model  string `toml:"model"`
+	} `toml:"anthropic"`
+	Ollama struct {
+		Endpoint string `toml:"endpoint"`
+		Model    string `toml:"model"`
+	} `toml:"ollama"`
+}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -15,10 +30,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	// Load config file
+	var config Config
+	if _, err := toml.DecodeFile("config.toml", &config); err != nil {
+		log.Fatal("Error loading config.toml:", err)
 	}
 
 	// Get service type from args or default to OpenAI
@@ -31,23 +46,17 @@ func main() {
 	
 	switch serviceType {
 	case "anthropic":
-		apiKey := os.Getenv("ANTHROPIC_API_KEY")
-		if apiKey == "" {
-			log.Fatal("ANTHROPIC_API_KEY not found in environment")
+		if config.Anthropic.APIKey == "" {
+			log.Fatal("Anthropic API key not found in config")
 		}
-		aiService = ai.NewAnthropicService(apiKey)
+		aiService = ai.NewAnthropicService(config.Anthropic.APIKey)
 	case "openai":
-		apiKey := os.Getenv("OPENAI_API_KEY")
-		if apiKey == "" {
-			log.Fatal("OPENAI_API_KEY not found in environment")
+		if config.OpenAI.APIKey == "" {
+			log.Fatal("OpenAI API key not found in config")
 		}
-		aiService = ai.NewOpenAIService(apiKey)
+		aiService = ai.NewOpenAIService(config.OpenAI.APIKey)
 	case "ollama":
-		model := os.Getenv("OLLAMA_MODEL")
-		if model == "" {
-			model = "llama2" // default model
-		}
-		aiService = ai.NewOllamaService(model)
+		aiService = ai.NewOllamaService(config.Ollama.Model)
 	default:
 		log.Fatalf("Unknown service type: %s", serviceType)
 	}
